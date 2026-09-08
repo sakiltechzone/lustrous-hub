@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Lustrous Hub - Referral Team</title>
+
+    <!-- Telegram SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-blue: #1c64f2;
+            --light-blue: #3f83f8;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --card-glass: rgba(255, 255, 255, 0.94);
+            --card-white: #ffffff;
+            --success: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none !important;
+        }
+
+        body {
+            background-color: #3b82f6;
+            background-image: 
+                radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.25) 0%, transparent 60%),
+                radial-gradient(rgba(255, 255, 255, 0.18) 1.5px, transparent 1.5px),
+                linear-gradient(180deg, #1d6bf3 0%, #60a5fa 35%, #bfdbfe 70%, #f0f6ff 100%);
+            background-size: 100% 100%, 16px 16px, 100% 100%;
+            min-height: 100vh;
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            padding: calc(env(safe-area-inset-top, 0px) + 55px) 18px 110px 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Top Bar */
+        .top-nav {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .back-pill-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .brand-text {
+            font-size: 19px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .wallet-pill {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 6px 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-dark);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        /* Hero Card */
+        .refer-hero-card {
+            width: 100%;
+            background: var(--card-glass);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 22px 18px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(15, 75, 216, 0.08);
+            margin-bottom: 16px;
+        }
+
+        .refer-hero-card .gift-icon {
+            font-size: 38px;
+            color: var(--primary-blue);
+            margin-bottom: 8px;
+            filter: drop-shadow(0 4px 10px rgba(28, 100, 242, 0.3));
+        }
+
+        .refer-hero-card h3 {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .refer-hero-card p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+            font-weight: 600;
+        }
+
+        .bonus-highlight-pill {
+            display: inline-block;
+            margin-top: 10px;
+            background: #dcfce7;
+            color: #15803d;
+            font-size: 13px;
+            font-weight: 800;
+            padding: 5px 14px;
+            border-radius: 12px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            width: 100%;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stat-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+        }
+
+        .stat-card .stat-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .stat-card .stat-val {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .stat-card .stat-sub {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        /* Link Box Card */
+        .link-share-card {
+            width: 100%;
+            background: #ffffff;
+            border-radius: 22px;
+            padding: 18px;
+            box-shadow: 0 8px 25px rgba(15, 75, 216, 0.06);
+            margin-bottom: 16px;
+        }
+
+        .link-share-card label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .invite-link-input {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1.5px solid #e2e8f0;
+            background: #f8fafc;
+            color: var(--text-dark);
+            font-size: 12px;
+            font-weight: 600;
+            outline: none;
+            margin-bottom: 12px;
+            user-select: all !important;
+            -webkit-user-select: all !important;
+        }
+
+        .share-actions-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-copy-link, .btn-telegram-share {
+            flex: 1;
+            padding: 13px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            border: none;
+            transition: transform 0.1s;
+        }
+
+        .btn-copy-link {
+            background: #ecf3ff;
+            color: var(--primary-blue);
+        }
+
+        .btn-telegram-share {
+            background: linear-gradient(135deg, #3b76f6, #1856f3);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(24, 86, 243, 0.3);
+        }
+
+        .btn-copy-link:active, .btn-telegram-share:active {
+            transform: scale(0.97);
+        }
+
+        /* Tier / Info Section */
+        .team-levels-section {
+            width: 100%;
+        }
+
+        .team-levels-section h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 10px;
+            margin-left: 4px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .level-row-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .level-left-col {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lvl-badge {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: #eff6ff;
+            color: var(--primary-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 16px;
+        }
+
+        .lvl-info .title {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .lvl-info .speed-sub {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .level-members-count {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary-blue);
+        }
+
+        /* 5-Button Modern Bottom Nav Bar */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 68px;
+            background: #ffffff;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.08);
+            z-index: 99999 !important;
+            padding: 0 4px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            color: #94a3b8;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            flex: 1;
+            height: 100%;
+            text-decoration: none;
+        }
+
+        .nav-item.active {
+            color: var(--primary-blue);
+        }
+
+        .nav-item i {
+            font-size: 17px;
+            pointer-events: none;
+        }
+
+        .nav-item span {
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Top App Bar -->
+        <div class="top-nav">
+            <div onclick="window.location.href='index.html'" class="back-pill-btn">
+                <i class="fas fa-chevron-left"></i>
+            </div>
+            <span class="brand-text">Referrals</span>
+            <div onclick="window.location.href='withdraw.html'" class="wallet-pill">
+                <i class="fas fa-wallet" style="color: var(--primary-blue);"></i>
+                $<span id="topBalance">0.000</span>
+            </div>
+        </div>
+
+        <!-- Hero Card -->
+        <div class="refer-hero-card">
+            <i class="fas fa-users-rays gift-icon"></i>
+            <h3>Invite Friends, Earn USDT</h3>
+            <p>Share Lustrous Hub with your circle and earn instant USDT bonuses.</p>
+            <div class="bonus-highlight-pill">
+                Direct Bonus: +$<span id="referBonusRateText">0.05</span> USDT / Friend
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-label">Direct Referrals</span>
+                <span class="stat-val" id="totalRefCount">0</span>
+                <span class="stat-sub">Joined Users</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Referral Profits</span>
+                <span class="stat-val">$<span id="referTotalEarnedUsdt">0.00</span></span>
+                <span class="stat-sub">Direct USDT</span>
+            </div>
+        </div>
+
+        <!-- Link Share Box -->
+        <div class="link-share-card">
+            <label>Your Unique Invite Link</label>
+            <input type="text" id="referralLinkInput" class="invite-link-input" readonly value="Loading link...">
+            
+            <div class="share-actions-row">
+                <button class="btn-copy-link" onclick="copyReferralLink()">
+                    <i class="fas fa-copy"></i> Copy
+                </button>
+                <button class="btn-telegram-share" onclick="shareOnTelegram()">
+                    <i class="fab fa-telegram-plane"></i> Invite Friends
+                </button>
+            </div>
+        </div>
+
+        <!-- Tier Info Section -->
+        <div class="team-levels-section">
+            <h4>Tier Overview</h4>
+            
+            <div class="level-row-card">
+                <div class="level-left-col">
+                    <div class="lvl-badge"><i class="fas fa-user-plus"></i></div>
+                    <div class="lvl-info">
+                        <div class="title">Direct Friends</div>
+                        <div class="speed-sub">Get direct USDT for every active invite</div>
+                    </div>
+                </div>
+                <div class="level-members-count" id="f1CountDisplay">0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5-Button Modern Bottom Nav Bar -->
+    <nav class="bottom-nav">
+        <div class="nav-item" onclick="window.location.href='index.html'">
+            <i class="fas fa-play-circle"></i>
+            <span>Viral Video</span>
+        </div>
+        <div class="nav-item" onclick="window.location.href='movies.html'">
+            <i class="fas fa-film"></i>
+            <span>Movie</span>
+        </div>
+        <div class="nav-item" onclick="window.location.href='earn.html'">
+            <i class="fas fa-circle-play"></i>
+            <span>Earn</span>
+        </div>
+        <div class="nav-item active" onclick="window.location.href='refer.html'">
+            <i class="fas fa-user-friends"></i>
+            <span>Referral</span>
+        </div>
+        <div class="nav-item" onclick="window.location.href='withdraw.html'">
+            <i class="fas fa-wallet"></i>
+            <span>Wallet</span>
+        </div>
+    </nav>
+
+    <!-- Firebase SDKs (v8) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+
+        let tg = null;
+        try {
+            if (window.Telegram && window.Telegram.WebApp) {
+                tg = window.Telegram.WebApp;
+                tg.expand();
+            }
+        } catch(e) {}
+
+        const BOT_USERNAME = "Lustrous_Hub_bot";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDwMQskeEhJfK_Yyb4EfbYs7_GwzXzastk",
+            authDomain: "lustrous-hub.firebaseapp.com",
+            databaseURL: "https://lustrous-hub-default-rtdb.firebaseio.com",
+            projectId: "lustrous-hub",
+            storageBucket: "lustrous-hub.firebasestorage.app",
+            messagingSenderId: "486575899224",
+            appId: "1:486575899224:web:f8be8fbd9771c684c0002d"
+        };
+
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        let userId = "sakil24";
+        let referBonusRate = 0.05;
+
+        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            const u = tg.initDataUnsafe.user;
+            userId = u.id ? u.id.toString() : (u.username || "sakil24");
+        }
+
+        const inviteLink = `https://t.me/${BOT_USERNAME}?start=ref_${userId}`;
+        document.getElementById('referralLinkInput').value = inviteLink;
+
+        // অ্যাডমিন সিস্টেম সেটিংস থেকে রেফারেল বোনাস রেট লোড
+        db.ref('system_settings').on('value', snap => {
+            const val = snap.val();
+            if (val && typeof val.referBonus !== 'undefined') {
+                referBonusRate = parseFloat(val.referBonus) || 0.05;
+                document.getElementById('referBonusRateText').innerText = referBonusRate.toFixed(2);
+                updateReferEarnings();
+            }
+        });
+
+        // লাইভ USDT ব্যালেন্স
+        const userRef = db.ref('users/' + userId);
+        userRef.on('value', snap => {
+            const val = snap.val();
+            if (val && typeof val.balance !== 'undefined') {
+                document.getElementById('topBalance').innerText = parseFloat(val.balance).toFixed(3);
+            } else {
+                document.getElementById('topBalance').innerText = "0.000";
+            }
+        });
+
+        let directRefCount = 0;
+
+        // রেফারেল পরিসংখ্যান লোড
+        const refRef = db.ref('referrals/' + userId);
+        refRef.on('value', snap => {
+            const val = snap.val() || {};
+            directRefCount = val.list ? Object.keys(val.list).length : (typeof val.count === 'number' ? val.count : 0);
+
+            document.getElementById('f1CountDisplay').innerText = directRefCount;
+            document.getElementById('totalRefCount').innerText = directRefCount;
+            updateReferEarnings();
+        });
+
+        function updateReferEarnings() {
+            const earnedUsdt = directRefCount * referBonusRate;
+            document.getElementById('referTotalEarnedUsdt').innerText = earnedUsdt.toFixed(2);
+        }
+
+        function copyReferralLink() {
+            const linkInput = document.getElementById('referralLinkInput');
+            linkInput.select();
+            linkInput.setSelectionRange(0, 99999);
+
+            const copied = () => {
+                if (tg && tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+                if (tg && tg.showAlert) tg.showAlert("✅ Invite link copied to clipboard!");
+                else alert("✅ Invite link copied to clipboard!");
+            };
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(linkInput.value).then(copied);
+            } else {
+                document.execCommand("copy");
+                copied();
+            }
+        }
+
+        function shareOnTelegram() {
+            const shareText = encodeURIComponent(`🔥 Join Lustrous Hub! Watch trending viral videos, movies, and earn free USDT rewards every day!\n\n👇 Start earning now:`);
+            const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=${shareText}`;
+            
+            if (tg && tg.openTelegramLink) {
+                tg.openTelegramLink(shareUrl);
+            } else {
+                window.open(shareUrl, '_blank');
+            }
+        }
+    </script>
+</body>
+</html>
