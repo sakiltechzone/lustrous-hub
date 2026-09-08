@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lustrous Hub - Master Admin Portal</title>
+
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #1c64f2;
+            --primary-glow: rgba(28, 100, 242, 0.25);
+            --bg-dark: #090d16;
+            --card-bg: #111827;
+            --border: #1f2937;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(28, 100, 242, 0.12) 0%, transparent 50%),
+                linear-gradient(180deg, #090d16 0%, #030712 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .admin-wrapper {
+            width: 100%;
+            max-width: 960px;
+            padding: 20px 16px 80px 16px;
+        }
+
+        /* Top Bar */
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .admin-header .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            box-shadow: 0 4px 12px var(--primary-glow);
+        }
+
+        .admin-header h2 {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .btn-logout {
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #f87171;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Navigation Tabs */
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            padding-bottom: 4px;
+            scrollbar-width: none;
+        }
+
+        .tab-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 4px 14px var(--primary-glow);
+        }
+
+        /* Section Container */
+        .section-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-card h3 {
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Forms */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .styled-input, .styled-select, .styled-textarea {
+            background: #030712;
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .styled-input:focus, .styled-select:focus, .styled-textarea:focus {
+            border-color: var(--primary);
+        }
+
+        .styled-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-action {
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            padding: 12px 22px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 14px var(--primary-glow);
+        }
+
+        .btn-action:hover {
+            opacity: 0.9;
+        }
+
+        .btn-cancel-edit {
+            background: #1f2937;
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            gap: 6px;
+            margin-left: 8px;
+        }
+
+        /* Items Feed */
+        .feed-item {
+            background: #030712;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .feed-info h4 {
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .feed-info p {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+
+        .badge-cat {
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 6px;
+            background: rgba(28, 100, 242, 0.18);
+            color: #60a5fa;
+            text-transform: uppercase;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .btn-edit {
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            border: 1px solid #3b82f6;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Table */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+            text-align: left;
+        }
+
+        th, td {
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 11px;
+        }
+
+        .btn-approve {
+            background: var(--success);
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-right: 4px;
+        }
+
+        .btn-reject {
+            background: var(--danger);
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-wrapper">
+        <!-- Header -->
+        <div class="admin-header">
+            <div class="brand">
+                <div class="brand-icon"><i class="fas fa-sliders"></i></div>
+                <div>
+                    <h2>Lustrous Control Hub</h2>
+                    <span style="font-size: 11px; color: var(--text-muted);" id="currentAdminEmail">admin@domain.com</span>
+                </div>
+            </div>
+            <button class="btn-logout" onclick="handleLogout()"><i class="fas fa-arrow-right-from-bracket"></i> Sign Out</button>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchSection('viralVideosTab', this)"><i class="fas fa-fire"></i> Viral Videos</button>
+            <button class="tab-btn" onclick="switchSection('moviesTab', this)"><i class="fas fa-film"></i> Movies Hub</button>
+            <button class="tab-btn" onclick="switchSection('settingsTab', this)"><i class="fas fa-gear"></i> System Config</button>
+            <button class="tab-btn" onclick="switchSection('withdrawTab', this)"><i class="fas fa-wallet"></i> Payout Queue</button>
+        </div>
+
+        <!-- 1. VIRAL VIDEOS TAB -->
+        <div id="viralVideosTab" class="content-tab">
+            <div class="section-card">
+                <h3 id="viralFormTitle"><i class="fas fa-fire" style="color: #ef4444;"></i> Add New Viral Video</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="viralCategory" class="styled-select">
+                            <option value="viral_video">Viral Video</option>
+                            <option value="facebook">Facebook Viral</option>
+                            <option value="instagram">Instagram Viral</option>
+                            <option value="tiktok">TikTok Viral</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Video Title</label>
+                        <input type="text" id="viralTitle" class="styled-input" placeholder="e.g. Crazy AI Magic Video">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Short Description</label>
+                        <textarea id="viralDescription" class="styled-textarea" placeholder="Short description of the viral video..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Preview Video Link (Direct MP4)</label>
+                        <input type="url" id="viralPreviewUrl" class="styled-input" placeholder="https://example.com/teaser.mp4">
+                    </div>
+                    <div class="form-group">
+                        <label>Full Video Link (MP4 / Web Player)</label>
+                        <input type="url" id="viralFullUrl" class="styled-input" placeholder="https://example.com/full_video.mp4">
+                    </div>
+                    <div class="form-group">
+                        <label>Ads Required to Unlock (e.g. 1 or 2)</label>
+                        <input type="number" id="viralRequiredAds" class="styled-input" min="1" max="10" placeholder="Default (e.g. 2)">
+                    </div>
+                </div>
+                <button class="btn-action" id="btnUploadViral" onclick="uploadViralPost()">
+                    <i class="fas fa-cloud-arrow-up"></i> <span id="btnViralUploadText">Publish Viral Video</span>
+                </button>
+                <button class="btn-cancel-edit" id="btnCancelViralEdit" onclick="cancelEditViral()">
+                    <i class="fas fa-xmark"></i> Cancel Edit
+                </button>
+            </div>
+
+            <div class="section-card">
+                <h3><i class="fas fa-list-check"></i> Active Viral Videos Library</h3>
+                <div id="viralListContainer">
+                    <p style="color: var(--text-muted); font-size: 13px;">Loading viral videos...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. MOVIES TAB -->
+        <div id="moviesTab" class="content-tab" style="display: none;">
+            <div class="section-card">
+                <h3 id="movieFormTitle"><i class="fas fa-clapperboard" style="color: var(--primary);"></i> Add New Movie</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select id="movieCategory" class="styled-select">
+                            <option value="new_movie">New Movie</option>
+                            <option value="action">Action</option>
+                            <option value="hindi">Hindi Dubbed</option>
+                            <option value="hollywood">Hollywood</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Movie Title</label>
+                        <input type="text" id="movieTitle" class="styled-input" placeholder="e.g. Mission Impossible 2026">
+                    </div>
+                    <div class="form-group" style="grid-column: 1 / -1;">
+                        <label>Movie Plot / Description</label>
+                        <textarea id="movieDescription" class="styled-textarea" placeholder="Overview of the movie storyline..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Trailer / Teaser Link (MP4)</label>
+                        <input type="url" id="moviePreviewUrl" class="styled-input" placeholder="https://example.com/trailer.mp4">
+                    </div>
+                    <div class="form-group">
+                        <label>Full Movie Stream Link</label>
+                        <input type="url" id="movieFullUrl" class="styled-input" placeholder="https://example.com/movie_stream">
+                    </div>
+                    <div class="form-group">
+                        <label>Ads Required to Unlock (e.g. 2 or 3)</label>
+                        <input type="number" id="movieRequiredAds" class="styled-input" min="1" max="10" placeholder="Default (e.g. 2)">
+                    </div>
+                </div>
+                <button class="btn-action" id="btnUploadMovie" onclick="uploadMoviePost()">
+                    <i class="fas fa-cloud-arrow-up"></i> <span id="btnMovieUploadText">Publish Movie</span>
+                </button>
+                <button class="btn-cancel-edit" id="btnCancelMovieEdit" onclick="cancelEditMovie()">
+                    <i class="fas fa-xmark"></i> Cancel Edit
+                </button>
+            </div>
+
+            <div class="section-card">
+                <h3><i class="fas fa-video"></i> Active Movies Library</h3>
+                <div id="moviesListContainer">
+                    <p style="color: var(--text-muted); font-size: 13px;">Loading movies...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. SYSTEM CONFIG TAB -->
+        <div id="settingsTab" class="content-tab" style="display: none;">
+            <div class="section-card">
+                <h3><i class="fas fa-coins" style="color: var(--warning);"></i> Global Economy & Ad Config</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Per Video Ad Reward (USDT)</label>
+                        <input type="number" step="0.0001" id="configPerAdReward" class="styled-input" placeholder="0.001">
+                    </div>
+                    <div class="form-group">
+                        <label>Daily Shorts Video Limit (Times)</label>
+                        <input type="number" id="configDailyAdLimit" class="styled-input" placeholder="10">
+                    </div>
+                    <div class="form-group">
+                        <label>Daily Spin Limit (Times)</label>
+                        <input type="number" id="configSpinLimit" class="styled-input" placeholder="5">
+                    </div>
+                    <div class="form-group">
+                        <label>Referral Bonus (USDT per user)</label>
+                        <input type="number" step="0.01" id="configReferBonus" class="styled-input" placeholder="0.05">
+                    </div>
+                    <div class="form-group">
+                        <label>Default Unlock Ads Count</label>
+                        <input type="number" min="1" max="10" id="configDefaultMovieAds" class="styled-input" placeholder="2">
+                    </div>
+                    <div class="form-group">
+                        <label>Minimum Withdrawal (USDT)</label>
+                        <input type="number" step="0.1" id="configMinWithdraw" class="styled-input" placeholder="1.00">
+                    </div>
+                </div>
+                <button class="btn-action" onclick="saveSystemSettings()"><i class="fas fa-floppy-disk"></i> Save Global Settings</button>
+            </div>
+        </div>
+
+        <!-- 4. WITHDRAW QUEUE TAB -->
+        <div id="withdrawTab" class="content-tab" style="display: none;">
+            <div class="section-card">
+                <h3><i class="fas fa-clock-rotate-left" style="color: var(--warning);"></i> Pending Payout Requests</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Network</th>
+                                <th>Address / Pay ID</th>
+                                <th>Amount (USDT)</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="withdrawTableBody">
+                            <tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No pending requests found.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs (v8) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDwMQskeEhJfK_Yyb4EfbYs7_GwzXzastk",
+            authDomain: "lustrous-hub.firebaseapp.com",
+            databaseURL: "https://lustrous-hub-default-rtdb.firebaseio.com",
+            projectId: "lustrous-hub",
+            storageBucket: "lustrous-hub.firebasestorage.app",
+            messagingSenderId: "486575899224",
+            appId: "1:486575899224:web:f8be8fbd9771c684c0002d"
+        };
+
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.database();
+
+        let editingViralKey = null;
+        let cachedViralData = {};
+
+        let editingMovieKey = null;
+        let cachedMovieData = {};
+        let globalDefaultAds = 2;
+
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = "admin-login.html";
+            } else {
+                document.getElementById('currentAdminEmail').innerText = user.email;
+                loadDashboardData();
+            }
+        });
+
+        function handleLogout() {
+            auth.signOut().then(() => {
+                window.location.href = "admin-login.html";
+            });
+        }
+
+        function switchSection(tabId, btn) {
+            document.querySelectorAll('.content-tab').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabId).style.display = 'block';
+            btn.classList.add('active');
+        }
+
+        function loadDashboardData() {
+            // সমস্ত ভিডিও ডেটা লোড করে ভাইরাল ভিডিও ও মুভি ফিল্টার করা
+            db.ref('movie_posts').on('value', snap => {
+                const data = snap.val() || {};
+                renderViralFeed(data);
+                renderMovieFeed(data);
+            });
+
+            // গ্লোবাল সিস্টেম সেটিংস লোড
+            db.ref('system_settings').on('value', snap => {
+                const conf = snap.val() || {};
+                globalDefaultAds = parseInt(conf.defaultMovieAds) || 2;
+                document.getElementById('configDefaultMovieAds').value = globalDefaultAds;
+                document.getElementById('configPerAdReward').value = conf.perAdReward || 0.001;
+                document.getElementById('configDailyAdLimit').value = conf.dailyAdLimit || 10;
+                document.getElementById('configSpinLimit').value = conf.spinLimit || 5;
+                document.getElementById('configReferBonus').value = conf.referBonus || 0.05;
+                document.getElementById('configMinWithdraw').value = conf.minWithdraw || 1.00;
+            });
+
+            // উইথড্র পেন্ডিং কিউ লোড
+            db.ref('admin_withdraw_queue').on('value', snap => {
+                const tbody = document.getElementById('withdrawTableBody');
+                const data = snap.val();
+                if (!data) {
+                    tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No pending requests.</td></tr>';
+                    return;
+                }
+
+                let html = '';
+                Object.keys(data).forEach(key => {
+                    const req = data[key];
+                    if (req.status === "Pending") {
+                        html += `
+                            <tr>
+                                <td><b>${req.userId}</b></td>
+                                <td>${req.network}</td>
+                                <td style="font-family: monospace;">${req.address}</td>
+                                <td style="color: var(--success); font-weight: 700;">$${parseFloat(req.finalUsdt || req.amountUsdt).toFixed(3)}</td>
+                                <td>
+                                    <button class="btn-approve" onclick="handleWithdrawStatus('${key}', '${req.userId}', 'Paid')">Approve</button>
+                                    <button class="btn-reject" onclick="handleWithdrawStatus('${key}', '${req.userId}', 'Rejected', ${req.amountUsdt})">Reject</button>
+                                </td>
+                            </tr>
+                        `;
+                    }
+                });
+                tbody.innerHTML = html || '<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No pending requests.</td></tr>';
+            });
+        }
+
+        // ================== 1. VIRAL VIDEOS LOGIC ==================
+        const viralCategories = ['viral_video', 'facebook', 'instagram', 'tiktok'];
+
+        function renderViralFeed(data) {
+            const container = document.getElementById('viralListContainer');
+            cachedViralData = {};
+            let html = '';
+
+            Object.keys(data).reverse().forEach(key => {
+                const item = data[key];
+                if (viralCategories.includes(item.category)) {
+                    cachedViralData[key] = item;
+                    const reqAds = item.requiredAds || globalDefaultAds;
+                    html += `
+                        <div class="feed-item">
+                            <div class="feed-info">
+                                <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+                                    <span class="badge-cat">${item.category.replace('_', ' ')}</span>
+                                    <span style="font-size: 10px; font-weight: 700; color: #f59e0b; background: rgba(245, 158, 11, 0.15); padding: 2px 6px; border-radius: 5px;">
+                                        <i class="fas fa-play"></i> ${reqAds} Ads
+                                    </span>
+                                </div>
+                                <h4>${item.title}</h4>
+                                <p>${(item.description || '').substring(0, 75)}...</p>
+                            </div>
+                            <div class="item-actions">
+                                <button class="btn-edit" onclick="editViral('${key}')"><i class="fas fa-pen-to-square"></i></button>
+                                <button class="btn-delete" onclick="deleteVideo('${key}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            container.innerHTML = html || '<p style="color: var(--text-muted); font-size: 13px;">No viral videos found.</p>';
+        }
+
+        function uploadViralPost() {
+            const cat = document.getElementById('viralCategory').value;
+            const title = document.getElementById('viralTitle').value.trim();
+            const desc = document.getElementById('viralDescription').value.trim();
+            const previewUrl = document.getElementById('viralPreviewUrl').value.trim();
+            const fullUrl = document.getElementById('viralFullUrl').value.trim();
+            const reqAds = parseInt(document.getElementById('viralRequiredAds').value) || globalDefaultAds;
+
+            if (!title || !previewUrl || !fullUrl) {
+                alert("ভিডিও টাইটেল, প্রিভিউ লিংক এবং ফুল ভিডিও লিংক দেওয়া বাধ্যতামূলক!");
+                return;
+            }
+
+            const payload = {
+                category: cat,
+                title: title,
+                description: desc,
+                previewUrl: previewUrl,
+                fullVideoUrl: fullUrl,
+                requiredAds: reqAds,
+                updatedAt: Date.now()
+            };
+
+            if (editingViralKey) {
+                db.ref('movie_posts/' + editingViralKey).update(payload).then(() => {
+                    cancelEditViral();
+                    alert("ভাইরাল ভিডিও আপডেট হয়েছে!");
+                });
+            } else {
+                payload.createdAt = Date.now();
+                db.ref('movie_posts').push(payload).then(() => {
+                    cancelEditViral();
+                    alert("ভাইরাল ভিডিও সফলভাবে পাবলিশ হয়েছে!");
+                });
+            }
+        }
+
+        function editViral(key) {
+            const item = cachedViralData[key];
+            if (!item) return;
+
+            editingViralKey = key;
+            document.getElementById('viralCategory').value = item.category || 'viral_video';
+            document.getElementById('viralTitle').value = item.title || '';
+            document.getElementById('viralDescription').value = item.description || '';
+            document.getElementById('viralPreviewUrl').value = item.previewUrl || '';
+            document.getElementById('viralFullUrl').value = item.fullVideoUrl || '';
+            document.getElementById('viralRequiredAds').value = item.requiredAds || globalDefaultAds;
+
+            document.getElementById('viralFormTitle').innerHTML = '<i class="fas fa-pen-to-square" style="color: var(--warning);"></i> Edit Viral Video';
+            document.getElementById('btnViralUploadText').innerText = 'Update Video';
+            document.getElementById('btnCancelViralEdit').style.display = 'inline-flex';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelEditViral() {
+            editingViralKey = null;
+            document.getElementById('viralTitle').value = "";
+            document.getElementById('viralDescription').value = "";
+            document.getElementById('viralPreviewUrl').value = "";
+            document.getElementById('viralFullUrl').value = "";
+            document.getElementById('viralRequiredAds').value = "";
+
+            document.getElementById('viralFormTitle').innerHTML = '<i class="fas fa-fire" style="color: #ef4444;"></i> Add New Viral Video';
+            document.getElementById('btnViralUploadText').innerText = 'Publish Viral Video';
+            document.getElementById('btnCancelViralEdit').style.display = 'none';
+        }
+
+        // ================== 2. MOVIES LOGIC ==================
+        const movieCategories = ['new_movie', 'action', 'hindi', 'hollywood'];
+
+        function renderMovieFeed(data) {
+            const container = document.getElementById('moviesListContainer');
+            cachedMovieData = {};
+            let html = '';
+
+            Object.keys(data).reverse().forEach(key => {
+                const item = data[key];
+                if (movieCategories.includes(item.category)) {
+                    cachedMovieData[key] = item;
+                    const reqAds = item.requiredAds || globalDefaultAds;
+                    html += `
+                        <div class="feed-item">
+                            <div class="feed-info">
+                                <div style="display: flex; gap: 6px; align-items: center; margin-bottom: 4px;">
+                                    <span class="badge-cat">${item.category.replace('_', ' ')}</span>
+                                    <span style="font-size: 10px; font-weight: 700; color: #f59e0b; background: rgba(245, 158, 11, 0.15); padding: 2px 6px; border-radius: 5px;">
+                                        <i class="fas fa-film"></i> ${reqAds} Ads
+                                    </span>
+                                </div>
+                                <h4>${item.title}</h4>
+                                <p>${(item.description || '').substring(0, 75)}...</p>
+                            </div>
+                            <div class="item-actions">
+                                <button class="btn-edit" onclick="editMovie('${key}')"><i class="fas fa-pen-to-square"></i></button>
+                                <button class="btn-delete" onclick="deleteVideo('${key}')"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            container.innerHTML = html || '<p style="color: var(--text-muted); font-size: 13px;">No movies found.</p>';
+        }
+
+        function uploadMoviePost() {
+            const cat = document.getElementById('movieCategory').value;
+            const title = document.getElementById('movieTitle').value.trim();
+            const desc = document.getElementById('movieDescription').value.trim();
+            const previewUrl = document.getElementById('moviePreviewUrl').value.trim();
+            const fullUrl = document.getElementById('movieFullUrl').value.trim();
+            const reqAds = parseInt(document.getElementById('movieRequiredAds').value) || globalDefaultAds;
+
+            if (!title || !previewUrl || !fullUrl) {
+                alert("মুভি টাইটেল, ট্রেইলার লিংক এবং ফুল মুভি লিংক দেওয়া বাধ্যতামূলক!");
+                return;
+            }
+
+            const payload = {
+                category: cat,
+                title: title,
+                description: desc,
+                previewUrl: previewUrl,
+                fullVideoUrl: fullUrl,
+                requiredAds: reqAds,
+                updatedAt: Date.now()
+            };
+
+            if (editingMovieKey) {
+                db.ref('movie_posts/' + editingMovieKey).update(payload).then(() => {
+                    cancelEditMovie();
+                    alert("মুভি আপডেট সম্পন্ন হয়েছে!");
+                });
+            } else {
+                payload.createdAt = Date.now();
+                db.ref('movie_posts').push(payload).then(() => {
+                    cancelEditMovie();
+                    alert("নতুন মুভি সফলভাবে পাবলিশ হয়েছে!");
+                });
+            }
+        }
+
+        function editMovie(key) {
+            const item = cachedMovieData[key];
+            if (!item) return;
+
+            editingMovieKey = key;
+            document.getElementById('movieCategory').value = item.category || 'new_movie';
+            document.getElementById('movieTitle').value = item.title || '';
+            document.getElementById('movieDescription').value = item.description || '';
+            document.getElementById('moviePreviewUrl').value = item.previewUrl || '';
+            document.getElementById('movieFullUrl').value = item.fullVideoUrl || '';
+            document.getElementById('movieRequiredAds').value = item.requiredAds || globalDefaultAds;
+
+            document.getElementById('movieFormTitle').innerHTML = '<i class="fas fa-pen-to-square" style="color: var(--warning);"></i> Edit Movie';
+            document.getElementById('btnMovieUploadText').innerText = 'Update Movie';
+            document.getElementById('btnCancelMovieEdit').style.display = 'inline-flex';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelEditMovie() {
+            editingMovieKey = null;
+            document.getElementById('movieTitle').value = "";
+            document.getElementById('movieDescription').value = "";
+            document.getElementById('moviePreviewUrl').value = "";
+            document.getElementById('movieFullUrl').value = "";
+            document.getElementById('movieRequiredAds').value = "";
+
+            document.getElementById('movieFormTitle').innerHTML = '<i class="fas fa-clapperboard" style="color: var(--primary);"></i> Add New Movie';
+            document.getElementById('btnMovieUploadText').innerText = 'Publish Movie';
+            document.getElementById('btnCancelMovieEdit').style.display = 'none';
+        }
+
+        function deleteVideo(key) {
+            if (confirm("আপনি কি নিশ্চিত এই পোস্টটি ডিলিট করতে চান?")) {
+                db.ref('movie_posts/' + key).remove().then(() => {
+                    if (editingViralKey === key) cancelEditViral();
+                    if (editingMovieKey === key) cancelEditMovie();
+                });
+            }
+        }
+
+        // ================== 3. SETTINGS & PAYOUT ==================
+        function saveSystemSettings() {
+            const settings = {
+                perAdReward: parseFloat(document.getElementById('configPerAdReward').value) || 0.001,
+                dailyAdLimit: parseInt(document.getElementById('configDailyAdLimit').value) || 10,
+                spinLimit: parseInt(document.getElementById('configSpinLimit').value) || 5,
+                referBonus: parseFloat(document.getElementById('configReferBonus').value) || 0.05,
+                defaultMovieAds: parseInt(document.getElementById('configDefaultMovieAds').value) || 2,
+                minWithdraw: parseFloat(document.getElementById('configMinWithdraw').value) || 1.00
+            };
+
+            db.ref('system_settings').update(settings).then(() => {
+                alert("✅ গ্লোবাল সেটিংস সফলভাবে আপডেট হয়েছে!");
+            });
+        }
+
+        function handleWithdrawStatus(reqKey, uId, newStatus, refundUsdt) {
+            const updates = {};
+            updates['/admin_withdraw_queue/' + reqKey + '/status'] = newStatus;
+            updates['/withdraw_requests/' + uId + '/' + reqKey + '/status'] = newStatus;
+
+            // রিজেক্ট হলে ব্যবহারকারীকে তার কাটা USDT ব্যালেন্স রিফান্ড করা
+            if (newStatus === "Rejected" && refundUsdt) {
+                db.ref('users/' + uId + '/balance').transaction(current => {
+                    return parseFloat(((current || 0) + parseFloat(refundUsdt)).toFixed(4));
+                });
+            }
+
+            db.ref().update(updates).then(() => {
+                alert(`উইথড্র রিকোয়েস্টটি ${newStatus} করা হয়েছে!`);
+            });
+        }
+    </script>
+</body>
+</html>
